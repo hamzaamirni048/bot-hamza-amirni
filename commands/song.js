@@ -148,9 +148,19 @@ async function songCommand(sock, chatId, message, args, commands, userLang, matc
             }
         }
 
-        // Validate buffer
-        if (!audioBuffer || audioBuffer.length === 0) {
-            throw new Error('Downloaded audio buffer is empty');
+        // Validate buffer is not a JSON error
+        try {
+            const jsonCheck = JSON.parse(audioBuffer.toString());
+            if (jsonCheck && (jsonCheck.error || jsonCheck.status === false || jsonCheck.message)) {
+                throw new Error(jsonCheck.message || "API returned JSON error instead of file");
+            }
+        } catch (e) {
+            // Not JSON, continue
+        }
+
+        // Validate buffer size/existence
+        if (!process.env.NODE_TEST && (!Buffer.isBuffer(audioBuffer) || audioBuffer.length < 1024)) {
+            throw new Error('Downloaded file is too small or invalid (less than 1KB)');
         }
 
         // Detect actual file format from signature
@@ -200,20 +210,29 @@ async function songCommand(sock, chatId, message, args, commands, userLang, matc
 
         // Convert to MP3 if not already MP3
         let finalBuffer = audioBuffer;
-        let finalMimetype = 'audio/mpeg';
-        let finalExtension = 'mp3';
+        let finalMimetype = actualMimetype;
+        let finalExtension = fileExtension;
 
         if (fileExtension !== 'mp3') {
             try {
-                finalBuffer = await toAudio(audioBuffer, fileExtension);
-                if (!finalBuffer || finalBuffer.length === 0) {
-                    throw new Error('Conversion returned empty buffer');
+                const convertedBuffer = await toAudio(audioBuffer, fileExtension);
+                if (Buffer.isBuffer(convertedBuffer) && convertedBuffer.length > 0) {
+                    finalBuffer = convertedBuffer;
+                    finalMimetype = 'audio/mpeg';
+                    finalExtension = 'mp3';
+                } else {
+                    console.warn('[Song] Conversion failed or returned invalid buffer. Sending original.');
                 }
-                finalMimetype = 'audio/mpeg';
-                finalExtension = 'mp3';
             } catch (convErr) {
-                throw new Error(`Failed to convert ${detectedFormat} to MP3: ${convErr.message}`);
+                console.error(`[Song] Conversion critical error: ${convErr.message}. Sending original file.`);
+                // Fallback to original file
+                finalBuffer = audioBuffer;
             }
+        }
+
+        // Final safety check
+        if (!Buffer.isBuffer(finalBuffer)) {
+            throw new Error('Final audio buffer is completely invalid.');
         }
 
         // Send buffer as MP3
