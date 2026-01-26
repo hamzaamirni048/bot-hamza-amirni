@@ -57,7 +57,7 @@ async function apk2Command(sock, chatId, msg, args, commands, userLang) {
                     buttons: [
                         {
                             "name": "quick_reply",
-                            "buttonParamsJson": `{"display_text":"Download Now 📥","id":".apk ${app.id}"}`
+                            "buttonParamsJson": `{"display_text":"${L_DOWNLOAD}","id":".apk ${app.id}"}`
                         }
                     ]
                 })
@@ -65,12 +65,16 @@ async function apk2Command(sock, chatId, msg, args, commands, userLang) {
             i++;
         }
 
+        const L_LIB = t('apk.library_title', {}, userLang) || '🚀 *APK Downloader*';
+        const L_RESULTS = t('apk.results_for', { query: text }, userLang) || `Results for: *${text}*`;
+        const L_DOWNLOAD = t('apk.download_btn', {}, userLang) || 'Download Now 📥';
+
         const menuMsg = generateWAMessageFromContent(chatId, {
             viewOnceMessage: {
                 message: {
                     messageContextInfo: { deviceListMetadata: {}, deviceListMetadataVersion: 2 },
                     interactiveMessage: proto.Message.InteractiveMessage.fromObject({
-                        body: proto.Message.InteractiveMessage.Body.create({ text: `✨ *APK Downloader*\n\nResults for: *${text}*\nSwipe to explore apps...` }),
+                        body: proto.Message.InteractiveMessage.Body.create({ text: `${L_LIB}\n\n${L_RESULTS}` }),
                         footer: proto.Message.InteractiveMessage.Footer.create({ text: `© ${settings.botName} 2026` }),
                         header: proto.Message.InteractiveMessage.Header.create({ hasMediaAttachment: false }),
                         carouselMessage: proto.Message.InteractiveMessage.CarouselMessage.fromObject({ cards })

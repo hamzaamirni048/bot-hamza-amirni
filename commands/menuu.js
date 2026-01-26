@@ -5,17 +5,26 @@ const path = require('path');
 const fs = require('fs');
 const moment = require('moment-timezone');
 
-function runtime(seconds) {
+function runtime(seconds, lang = 'ar') {
     seconds = Number(seconds);
     var d = Math.floor(seconds / (3600 * 24));
     var h = Math.floor(seconds % (3600 * 24) / 3600);
     var m = Math.floor(seconds % 3600 / 60);
     var s = Math.floor(seconds % 60);
-    var dDisplay = d > 0 ? d + (d == 1 ? " يوم و " : " أيام و ") : "";
-    var hDisplay = h > 0 ? h + (h == 1 ? " ساعة و " : " ساعات و ") : "";
-    var mDisplay = m > 0 ? m + (m == 1 ? " دقيقة و " : " دقائق و ") : "";
-    var sDisplay = s > 0 ? s + (s == 1 ? " ثانية" : " ثواني") : "";
-    return dDisplay + hDisplay + mDisplay + sDisplay;
+    
+    if (lang === 'en') {
+        var dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days, ") : "";
+        var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+        var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+        var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+        return dDisplay + hDisplay + mDisplay + sDisplay;
+    } else {
+        var dDisplay = d > 0 ? d + (d == 1 ? " يوم و " : " أيام و ") : "";
+        var hDisplay = h > 0 ? h + (h == 1 ? " ساعة و " : " ساعات و ") : "";
+        var mDisplay = m > 0 ? m + (m == 1 ? " دقيقة و " : " دقائق و ") : "";
+        var sDisplay = s > 0 ? s + (s == 1 ? " ثانية" : " ثواني") : "";
+        return dDisplay + hDisplay + mDisplay + sDisplay;
+    }
 }
 
 module.exports = async (sock, chatId, msg, args, commands, userLang) => {
@@ -168,8 +177,16 @@ module.exports = async (sock, chatId, msg, args, commands, userLang) => {
 
         const time = moment.tz(settings.timezone || 'Africa/Casablanca').format('HH:mm:ss');
         const date = moment.tz(settings.timezone || 'Africa/Casablanca').format('DD/MM/YYYY');
-        const uptime = runtime(process.uptime());
-        const pushname = msg.pushName || 'مستخدم';
+        const uptime = runtime(process.uptime(), userLang);
+        const pushname = msg.pushName || (userLang === 'en' ? 'User' : 'مستخدم');
+
+        // Translation Labels
+        const L_WELCOME = t('menu.welcome', {}, userLang);
+        const L_BOTNAME = t('menu.bot_name', {}, userLang);
+        const L_DEV = t('menu.developer', {}, userLang);
+        const L_TIME = t('menu.time', {}, userLang);
+        const L_UPTIME = t('menu.uptime', {}, userLang);
+        const L_SWIPE = t('menu.swipe', {}, userLang);
 
         const menuMsg = generateWAMessageFromContent(chatId, {
             viewOnceMessage: {
@@ -177,13 +194,13 @@ module.exports = async (sock, chatId, msg, args, commands, userLang) => {
                     messageContextInfo: { deviceListMetadata: {}, deviceListMetadataVersion: 2 },
                     interactiveMessage: proto.Message.InteractiveMessage.fromObject({
                         body: proto.Message.InteractiveMessage.Body.create({ 
-                            text: `👋 *أهلاً بك يا ${pushname}*\n\n` +
-                                  `🤖 *اسم البوت:* ${botName}\n` +
-                                  `👑 *المطور:* حمزة اعمرني\n` +
-                                  `⏰ *الوقت:* ${time}\n` +
+                            text: `👋 *${L_WELCOME} ${pushname}*\n\n` +
+                                  `🤖 *${L_BOTNAME}:* ${userLang === 'en' ? 'Hamza Amirni' : 'حمزة اعمرني'}\n` +
+                                  `👑 *${L_DEV}:* حمزة اعمرني\n` +
+                                  `⏰ *${L_TIME}:* ${time}\n` +
                                   `📅 *التاريخ:* ${date}\n` +
-                                  `⏳ *مدة التشغيل:* ${uptime}\n\n` +
-                                  `*تصفح الأقسام من خلال سحب البطاقات لليمين أو اليسار...*`
+                                  `⏳ *${L_UPTIME}:* ${uptime}\n\n` +
+                                  `*${L_SWIPE}*`
                         }),
                         footer: proto.Message.InteractiveMessage.Footer.create({ text: `© ${botName} 2026` }),
                         header: proto.Message.InteractiveMessage.Header.create({ hasMediaAttachment: false }),

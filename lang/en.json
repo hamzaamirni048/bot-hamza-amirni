@@ -23,7 +23,11 @@
         "how_to_use": "How to Use",
         "example": "Example",
         "total_commands": "Total Commands",
-        "info_title": "Full Commands List"
+        "info_title": "Full Commands List",
+        "bot_name": "Bot Name",
+        "developer": "Developer",
+        "welcome": "Welcome",
+        "swipe": "Swipe the cards below to explore all commands..."
     },
     "command_desc": {
         "ai": "Ask AI assistant (GPT-5)",
@@ -283,7 +287,10 @@
         "uptodown": "🚀 *Found on Uptodown!*\n\n⚠️ Direct download is protected, but here is the link:\n\n📦 *App:* {name}\n🔗 *Link:* {url}\n\n⚔️ {botName}",
         "caption": "🎮 *App Name:* {name}\n📦 *Package:* {package}\n📅 *Updated:* {updated}\n📁 *Size:* {size} MB\n\n⏬ *Sending file...*\n⚔️ {botName}",
         "success": "✅ *Download Successful!*\n📊 *Remaining Today:* {remaining}/{limit}",
-        "error": "❌ *Error downloading APK. Please try again.*"
+        "error": "❌ *Error downloading APK. Please try again.*",
+        "library_title": "🚀 *Premium APK Library*",
+        "results_for": "🔍 *Search Results for:* {query}",
+        "download_btn": "Download Now 📥"
     },
     "group": {
         "bot_admin": "Please make the bot an admin first.",
