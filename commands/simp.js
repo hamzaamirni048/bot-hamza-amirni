@@ -26,7 +26,7 @@ async function simpCommand(sock, chatId, msg, args) {
             avatarUrl = await sock.profilePictureUrl(who, 'image');
         } catch (error) {
             console.error('Error fetching profile picture:', error);
-            avatarUrl = 'https://telegra.ph/file/24fa902ead26340f3df2c.png'; // Default avatar
+            avatarUrl = 'https://ui-avatars.com/api/?name=User&background=random&size=512'; // Default avatar
         }
 
         // Fetch the simp card from the API

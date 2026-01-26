@@ -19,7 +19,7 @@ async function stupidCommand(sock, chatId, msg, args) {
         try {
             avatarUrl = await sock.profilePictureUrl(who, 'image');
         } catch (error) {
-            avatarUrl = 'https://telegra.ph/file/24fa902ead26340f3df2c.png';
+            avatarUrl = 'https://ui-avatars.com/api/?name=User&background=random&size=512';
         }
 
         const templatePath = path.resolve(__dirname, '../assets/stupid_ma.png');
@@ -40,7 +40,7 @@ async function stupidCommand(sock, chatId, msg, args) {
             if (avatarRes) {
                 avatar = await Jimp.read(Buffer.from(avatarRes.data));
             } else {
-                avatar = await Jimp.read('https://telegra.ph/file/24fa902ead26340f3df2c.png');
+                avatar = await Jimp.read('https://ui-avatars.com/api/?name=User&background=random&size=512');
             }
         } catch (e) {
             console.error('Jimp Read Error:', e);

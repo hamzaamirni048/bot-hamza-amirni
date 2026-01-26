@@ -81,25 +81,36 @@ module.exports = async (sock, chatId, msg, args, commands, userLang) => {
         };
 
         const catImages = {
-            'new': 'https://telegra.ph/file/0b741753715ec35165842.jpg',
-            'religion': 'https://telegra.ph/file/3fb62828b4931a7833a9c.jpg',
-            'download': 'https://telegra.ph/file/332ce38515c0e0c9048c1.jpg',
-            'ai': 'https://telegra.ph/file/f05474661845187e5b22b.jpg',
-            'group': 'https://telegra.ph/file/153a55781a70425a1e2f3.jpg',
-            'tools': 'https://telegra.ph/file/b77f154316d9972353164.jpg',
-            'news': 'https://telegra.ph/file/204732152862a988d44c8.jpg',
-            'daily': 'https://telegra.ph/file/49c0d29759c8369680371.jpg',
-            'fun': 'https://telegra.ph/file/6c125df944ce55a90962b.jpg',
-            'games': 'https://telegra.ph/file/d89a7122105e49339e602.jpg',
-            'general': 'https://telegra.ph/file/1284dd3685e1975e523f4.jpg',
-            'owner': 'https://telegra.ph/file/3990867027d1421066341.jpg'
+            'new': 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000&auto=format&fit=crop',
+            'religion': 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=1000&auto=format&fit=crop',
+            'download': 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000&auto=format&fit=crop',
+            'ai': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop',
+            'group': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop',
+            'tools': 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000&auto=format&fit=crop',
+            'news': 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop',
+            'daily': 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=1000&auto=format&fit=crop',
+            'fun': 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1000&auto=format&fit=crop',
+            'games': 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1000&auto=format&fit=crop',
+            'general': 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=1000&auto=format&fit=crop',
+            'owner': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop'
         };
 
         const sections = ['new', 'religion', 'ai', 'download', 'tools', 'fun', 'games', 'group', 'news', 'daily', 'general', 'owner'];
 
         async function createHeaderImage(url) {
-            const { imageMessage } = await generateWAMessageContent({ image: { url } }, { upload: sock.waUploadToServer });
-            return imageMessage;
+            try {
+                const { imageMessage } = await generateWAMessageContent({ image: { url } }, { upload: sock.waUploadToServer });
+                return imageMessage;
+            } catch (e) {
+                console.error(`Failed to load help image: ${url}. Error: ${e.message}`);
+                const fallbackUrl = 'https://raw.githubusercontent.com/Hamzaamirni01/bot-hamza-amirni-main/main/media/hamza.jpg';
+                try {
+                    const { imageMessage } = await generateWAMessageContent({ image: { url: fallbackUrl } }, { upload: sock.waUploadToServer });
+                    return imageMessage;
+                } catch (err) {
+                    return null;
+                }
+            }
         }
 
         let cards = [];
@@ -107,7 +118,7 @@ module.exports = async (sock, chatId, msg, args, commands, userLang) => {
             const title = t(`menu.categories.${section}`, {}, userLang);
             const cmds = catMap[section];
             const icon = catIcons[section] || '🔹';
-            const imageUrl = catImages[section] || 'https://telegra.ph/file/0b741753715ec35165842.jpg';
+            const imageUrl = catImages[section] || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000&auto=format&fit=crop';
 
             let bodyText = `✨ *${icon} قسم ${title}* ✨\n\n`;
             cmds.forEach(cmd => {
