@@ -48,6 +48,7 @@ async function processImageAI(filePath, prompt) {
             "https://aienhancer.ai/api/v1/k/image-enhance/create",
             {
                 model: 2,
+                function: "image-enhance",
                 image: `data:image/jpeg;base64,${img}`,
                 settings
             },
