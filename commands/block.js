@@ -12,7 +12,7 @@ async function blockCommand(sock, chatId, msg, args) {
 
     try {
         const quotedMsg = msg.quoted ? msg.quoted : null;
-        const quotedParticipant = quotedMsg ? (quotedMsg.participant || quotedMsg.key.participant) : null;
+        const quotedParticipant = quotedMsg ? (quotedMsg.sender || quotedMsg.participant) : null;
 
         // Get target user
         let targetJid;
