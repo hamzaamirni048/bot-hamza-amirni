@@ -527,9 +527,13 @@ async function startBot() {
             let msg = chatUpdate.messages[0];
             if (!msg.message) return;
 
-            // 🕒 FILTER OLD MESSAGES (History Sync)
+            // 🕒 FILTER OLD MESSAGES (Strict Anti-Replay)
             const currentTime = Math.floor(Date.now() / 1000);
-            if (msg.messageTimestamp < currentTime - 45) return;
+            // Reduce window to 5 seconds to prevent re-processing messages after restart
+            if (msg.messageTimestamp < currentTime - 5) {
+                // console.log('[Replay Protection] Skipping old message:', msg.key.id);
+                return;
+            }
 
             // 🛡️ PREVENT DUPLICATE PROCESSING
             const msgId = msg.key.id;
